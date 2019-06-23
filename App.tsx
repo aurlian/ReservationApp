@@ -5,18 +5,34 @@
 import React, { Component } from "react";
 import { Platform, StyleSheet, Text, View, Image } from "react-native";
 
-const instructions = Platform.select({
-  ios: "Press Cmd+R to reload,\n" + "Cmd+D or shake for dev menu",
-  android:
-    "Double tap R on your keyboard to reload,\n" +
-    "Shake or press menu button for dev menu"
-});
+import Icon from "react-native-vector-icons/AntDesign";
 
 interface Props {}
 export default class App extends Component<Props> {
   render() {
     return (
       <View style={styles.container}>
+        <View style={styles.ticketHeader}>
+          <Icon
+            name="leftcircleo"
+            size={30}
+            color="#f8f8f8"
+            style={{ marginLeft: 10, marginTop: 5 }}
+          />
+          <Text style={styles.ticketHeaderText}>Reservation</Text>
+          <Icon
+            name="printer"
+            size={30}
+            color="#f8f8f8"
+            style={{ marginRight: 10, marginTop: 5 }}
+          />
+        </View>
+        <View style={styles.ticketHeader2}>
+          <Image
+            source={require("./assets/resta-blue.png")}
+            style={{ width: 60, height: 60, marginTop: 10 }}
+          />
+        </View>
         <View style={styles.ticket}>
           <View style={styles.ticketTop} />
           <View style={styles.ticketContainer}>
@@ -57,7 +73,12 @@ export default class App extends Component<Props> {
 
               <Image
                 source={require("./assets/bar.jpg")}
-                style={{ width: 270, height: 80, marginTop: 10 }}
+                style={{
+                  width: 300,
+                  height: 80,
+                  marginTop: 10,
+                  marginLeft: 5
+                }}
               />
             </View>
           </View>
@@ -72,16 +93,32 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#2C354C",
-    padding: 20
+    backgroundColor: "#2C354C"
   },
   ticket: {
+    flex: 1,
     width: "90%",
     fontSize: 20,
     textAlign: "center",
     borderTopWidth: 4,
-    borderColor: "#EF851A",
-    height: "75%"
+    borderColor: "#EF851A"
+  },
+
+  ticketHeader: {
+    width: "100%",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginTop: 15,
+    height: 38
+  },
+  ticketHeaderText: {
+    fontSize: 22,
+    color: "#f8f8f8",
+    fontWeight: "bold"
+  },
+  ticketHeader2: {
+    alignItems: "center",
+    marginBottom: 10
   },
   ticketTop: {
     height: 5,
@@ -90,7 +127,8 @@ const styles = StyleSheet.create({
   ticketContainer: {
     backgroundColor: "#f8f8f8",
     padding: 20,
-    height: "100%"
+    paddingTop: 10,
+    height: 450
   },
   ticketDetailItem: {
     borderBottomWidth: 1,
@@ -151,7 +189,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     backgroundColor: "#2C354C",
     position: "absolute",
-    left: 295,
+    left: 332,
     top: -20
   }
 });
