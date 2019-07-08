@@ -6,10 +6,30 @@ import React, { Component } from "react";
 import { StyleSheet, Text, View, Image } from "react-native";
 import { NavigationScreenProp } from "react-navigation";
 import Icon from "react-native-vector-icons/AntDesign";
+import gql from "graphql-tag";
+import { Query } from "react-apollo";
 
 export interface DetailScreenProps {
   navigation: NavigationScreenProp<any, any>;
 }
+
+interface Data {
+  reservation: any;
+}
+
+interface Variables {}
+
+const RESERVATION_QUERY = gql`
+  query GetReservation($itemId: ID!) {
+    reservation(where: { id: $itemId }) {
+      id
+      name
+      hotelName
+      arrivalDate
+      departureDate
+    }
+  }
+`;
 
 export default class Detail extends Component<DetailScreenProps, object> {
   static navigationOptions = {
@@ -17,81 +37,103 @@ export default class Detail extends Component<DetailScreenProps, object> {
   };
 
   render() {
-    return (
-      <View style={styles.container}>
-        <View style={styles.ticketHeader}>
-          <Icon
-            name="leftcircleo"
-            size={30}
-            color="#f8f8f8"
-            style={{ marginLeft: 10, marginTop: 5 }}
-            onPress={() => this.props.navigation.goBack()}
-          />
-          <Text style={styles.ticketHeaderText}>Reservation</Text>
-          <Icon
-            name="printer"
-            size={30}
-            color="#f8f8f8"
-            style={{ marginRight: 10, marginTop: 5 }}
-          />
-        </View>
-        <View style={styles.ticketHeader2}>
-          <Image
-            source={require("../assets/resta-blue.png")}
-            style={{ width: 60, height: 60, marginTop: 10 }}
-          />
-        </View>
-        <View style={styles.ticket}>
-          <View style={styles.ticketTop} />
-          <View style={styles.ticketContainer}>
-            <View style={styles.ticketDetailItem}>
-              <Text>GUEST</Text>
-              <Text style={styles.ticketDetailText}>Mher Sarkissian</Text>
-            </View>
-            <View style={styles.ticketDetailMultiItem}>
-              <View>
-                <Text>DATE</Text>
-                <Text style={styles.ticketDetailText}>June 30, 2019</Text>
-              </View>
-              <View>
-                <Text>TIME</Text>
-                <Text style={styles.ticketDetailText}>21:00 </Text>
-              </View>
-            </View>
-            <View style={styles.ticketDetailMultiItem}>
-              <View>
-                <Text>CLASS</Text>
-                <Text style={styles.ticketDetailText}>Executive</Text>
-              </View>
-              <View>
-                <Text>TABLE</Text>
-                <Text style={styles.ticketDetailText}>210C</Text>
-              </View>
-            </View>
-            <View style={styles.ticketDetailReservationBar}>
-              <Text>RESERVATION CODE</Text>
-              <Text style={styles.reservationConfirmationCode}>SL5 - K9A</Text>
-              <View style={styles.confirmationBox}>
-                <Text style={styles.confirmationBoxText}>PAID</Text>
-              </View>
-            </View>
-            <View style={styles.reservationCodeContainer}>
-              <View style={styles.leftDot} />
-              <View style={styles.rightDot} />
+    const itemId = this.props.navigation.getParam("itemId", "");
 
-              <Image
-                source={require("../assets/bar.jpg")}
-                style={{
-                  width: 300,
-                  height: 80,
-                  marginTop: 10,
-                  marginLeft: 5
-                }}
-              />
-            </View>
-          </View>
-        </View>
-      </View>
+    return (
+      <Query<Data, Variables> query={RESERVATION_QUERY} variables={{ itemId }}>
+        {({ loading, error, data }) => {
+          if (loading) {
+            return <Text>Loading...</Text>;
+          }
+          if (error) {
+            return <Text>Error!{error}</Text>;
+          }
+          if (data) {
+            return (
+              <View style={styles.container}>
+                <View style={styles.ticketHeader}>
+                  <Icon
+                    name="leftcircleo"
+                    size={30}
+                    color="#f8f8f8"
+                    style={{ marginLeft: 10, marginTop: 5 }}
+                    onPress={() => this.props.navigation.goBack()}
+                  />
+                  <Text style={styles.ticketHeaderText}>Reservation</Text>
+                  <Icon
+                    name="printer"
+                    size={30}
+                    color="#f8f8f8"
+                    style={{ marginRight: 10, marginTop: 5 }}
+                  />
+                </View>
+                <View style={styles.ticketHeader2}>
+                  <Image
+                    source={require("../assets/resta-blue.png")}
+                    style={{ width: 60, height: 60, marginTop: 10 }}
+                  />
+                </View>
+                <View style={styles.ticket}>
+                  <View style={styles.ticketTop} />
+                  <View style={styles.ticketContainer}>
+                    <View style={styles.ticketDetailItem}>
+                      <Text>GUEST</Text>
+                      <Text style={styles.ticketDetailText}>
+                        {data.reservation.name}
+                      </Text>
+                    </View>
+                    <View style={styles.ticketDetailMultiItem}>
+                      <View>
+                        <Text>DATE</Text>
+                        <Text style={styles.ticketDetailText}>
+                          {data.reservation.arrivalDate.substring(1, 10)}
+                        </Text>
+                      </View>
+                      <View>
+                        <Text>TIME</Text>
+                        <Text style={styles.ticketDetailText}>21:00 </Text>
+                      </View>
+                    </View>
+                    <View style={styles.ticketDetailMultiItem}>
+                      <View>
+                        <Text>CLASS</Text>
+                        <Text style={styles.ticketDetailText}>Executive</Text>
+                      </View>
+                      <View>
+                        <Text>TABLE</Text>
+                        <Text style={styles.ticketDetailText}>210C</Text>
+                      </View>
+                    </View>
+                    <View style={styles.ticketDetailReservationBar}>
+                      <Text>RESERVATION CODE</Text>
+                      <Text style={styles.reservationConfirmationCode}>
+                        SL5 - K9A
+                      </Text>
+                      <View style={styles.confirmationBox}>
+                        <Text style={styles.confirmationBoxText}>PAID</Text>
+                      </View>
+                    </View>
+                    <View style={styles.reservationCodeContainer}>
+                      <View style={styles.leftDot} />
+                      <View style={styles.rightDot} />
+
+                      <Image
+                        source={require("../assets/bar.jpg")}
+                        style={{
+                          width: 300,
+                          height: 80,
+                          marginTop: 10,
+                          marginLeft: 5
+                        }}
+                      />
+                    </View>
+                  </View>
+                </View>
+              </View>
+            );
+          }
+        }}
+      </Query>
     );
   }
 }
